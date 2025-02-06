@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Hammy Support</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.0.1/socket.io.js"></script>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@100..800&family=Space+Mono:ital,wght@0,400;0,700;1,400;1,700&display=swap">
+    <link rel="stylesheet" href="files/css/style.css"> <!-- Подключение CSS -->
+</head>
+<body>
+    <div class="container">
+        <header class="header">
+            <img src="files/images/222.png"> <!-- Исправленный путь к изображению -->
+            <h1>Hammy Support</h1>
+            <button class="logout-button" onclick="logout()">Выйти</button>
+        </header>
+
+        <div class="users-panel">
+            <h2>Пользователи</h2>
+            <ul class="user-list">
+                {% for user in users %}
+                <li class="user-item" onclick="loadMessages({{ user }})">{{ user }}</li>
+                {% endfor %}
+            </ul>
+        </div>
+
+        <div class="chat-container">
+            <div class="messages-box" id="messages">
+                <!-- Сообщения будут добавляться здесь -->
+            </div>
+            <div class="input-box">
+                <input type="text" id="messageInput" placeholder="Введите сообщение..." onkeypress="handleKeyPress(event)">
+                <button onclick="sendMessage()">Отправить</button>
+            </div>
+        </div>
+
+        <footer class="footer">
+            Copyright© Diabolical Hypnodance
+        </footer>
+    </div>
+
+    <script src="files/js/script.js"></script> <!-- Подключение JS -->
+</body>
+<script>
+    function logout() {
+        fetch('/logout')
+        .then(() => {
+            window.location.href = '/login';
+        });
+    }
+</script>
+</html>
