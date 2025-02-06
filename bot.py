@@ -10,7 +10,6 @@ dp = Dispatcher()
 
 FLASK_SERVER_URL = "http://127.0.0.1:5001"  # Укажи адрес сервера Flask
 
-
 @dp.message(Command("start"))
 async def start_command(message: Message):
     await message.answer("Привет! Это тех.поддержка HammyPay. Здесь Вы можете оставить свой вопрос и Вам ответят в ближайшее время.")
