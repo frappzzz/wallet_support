@@ -8,7 +8,7 @@ from DB import DB
 bot = Bot(token="8041525340:AAGiUjdpl7ZmDc5IO5YvATfXgBRXI_DRCz8")
 dp = Dispatcher()
 
-FLASK_SERVER_URL = "http://127.0.0.1:5001"  # Укажи адрес сервера Flask
+FLASK_SERVER_URL = "http://127.0.0.1:5005"  # Укажи адрес сервера Flask
 
 @dp.message(Command("start"))
 async def start_command(message: Message):
