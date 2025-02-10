@@ -14,7 +14,6 @@ TELEGRAM_API_URL = f"https://api.telegram.org/bot{BOT_TOKEN}/sendMessage"
 CORRECT_USERNAME = "admin"
 CORRECT_PASSWORD = "AdminA487"
 
-
 @app.route('/')
 def index():
     # Проверяем, авторизован ли пользователь
