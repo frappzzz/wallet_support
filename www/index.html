@@ -9,7 +9,7 @@
 <body>
     <div class="container">
         <header class="header">
-            <img src="files/images/222.png"> <!-- Исправленный путь к изображению -->
+            <img src="files/images/hum.jpg"> <!-- Исправленный путь к изображению -->
             <h1>Hammy Support</h1>
             <button class="logout-button" onclick="logout()">Выйти</button>
         </header>
@@ -18,7 +18,9 @@
             <h2>Пользователи</h2>
             <ul class="user-list">
                 {% for user in users %}
-                <li class="user-item" onclick="loadMessages({{ user }})">{{ user }}</li>
+                <li class="user-item" onclick="loadMessages({{ user[0] }})">
+                    {{ user[0] }} ({{ user[1] }})
+                </li>
                 {% endfor %}
             </ul>
         </div>

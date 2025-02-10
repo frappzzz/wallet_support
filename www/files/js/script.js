@@ -3,7 +3,12 @@ let currentUser = null;
 const socket = io();
 
 function loadMessages(id_user_tg) {
+    document.querySelectorAll('.user-item').forEach(item => {
+        item.classList.remove('active');
+    });
+    event.target.classList.add('active');
     currentUser = id_user_tg;
+
     fetch(`/get_messages/${id_user_tg}`)
         .then(response => response.json())
         .then(messages => {
@@ -37,7 +42,14 @@ function sendMessage() {
         input.value = '';
     });
 }
-
+socket.on('new_user', function(data) {
+    const userList = document.querySelector('.user-list');
+    const li = document.createElement('li');
+    li.className = 'user-item';
+    li.setAttribute('onclick', `loadMessages(${data.id_user_tg})`);
+    li.textContent = `${data.id_user_tg} (${data.id_user_web})`;
+    userList.appendChild(li);
+});
 socket.on('update_messages', function(data) {
     if (currentUser === data.id_user_tg) {
         const messagesDiv = document.getElementById('messages');

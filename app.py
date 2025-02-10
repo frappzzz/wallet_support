@@ -22,7 +22,7 @@ def index():
         return redirect(url_for('login'))
 
     db = DB()
-    users = set(msg[2] for msg in db.get_all_messages())  # Получаем уникальных пользователей
+    users = db.get_all_users() # Получаем уникальных пользователей
     return render_template('index.html', users=users)
 
 
@@ -48,8 +48,18 @@ def logout():
     session.pop('logged_in', None)
     return redirect(url_for('login'))
 
-
-
+@app.route('/generate_link/<int:id_user_web>')
+def generate_link(id_user_web):
+    bot_username = "hammysupport_bot"  # Замените на username бота
+    return f"https://t.me/{bot_username}?start={id_user_web}"
+@app.route('/new_user', methods=['POST'])
+def handle_new_user():
+    data = request.json
+    socketio.emit('new_user', {
+        'id_user_tg': data['id_user_tg'],
+        'id_user_web': data['id_user_web']
+    })
+    return jsonify({'status': 'success'})
 
 @app.route('/get_messages/<int:id_user_tg>')
 def get_messages(id_user_tg):

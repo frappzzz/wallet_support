@@ -43,7 +43,35 @@ class DB():
             "INSERT INTO BotMessages (id_user_tg, bot_message, bot_message_number, status) VALUES (?, ?, ?, ?);",
             (id_user_tg, bot_message, bot_message_number, 'response'))
         self.con.commit()
+        # Создаем таблицу Users
 
+    def createUsersTable(self):
+        self.cur.execute("""
+               CREATE TABLE IF NOT EXISTS Users (
+                   id INTEGER PRIMARY KEY AUTOINCREMENT,
+                   id_user_tg INTEGER UNIQUE,
+                   id_user_web INTEGER
+               )
+           """)
+        self.con.commit()
+
+        # Добавляем пользователя
+
+    def addUser(self, id_user_tg, id_user_web):
+        self.cur.execute("""
+               INSERT OR IGNORE INTO Users (id_user_tg, id_user_web) 
+               VALUES (?, ?)
+           """, (id_user_tg, id_user_web))
+        self.con.commit()
+
+        # Получаем id_user_web по id_user_tg
+
+    def get_user_web_id(self, id_user_tg):
+        self.cur.execute("""
+               SELECT id_user_web FROM Users WHERE id_user_tg = ?
+           """, (id_user_tg,))
+        result = self.cur.fetchone()
+        return result[0] if result else None
     def get_messages_by_user(self, id_user_tg):
         self.cur.execute("""
             SELECT id_user_message, id_user_web, id_user_tg, user_message, user_message_number, status 
@@ -73,3 +101,7 @@ class DB():
         """, (id_user_tg,))
         result = self.cur.fetchone()
         return result[0] if result else 0
+
+    def get_all_users(self):
+        self.cur.execute("SELECT id_user_tg, id_user_web FROM Users")
+        return self.cur.fetchall()

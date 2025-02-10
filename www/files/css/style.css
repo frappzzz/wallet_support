@@ -192,3 +192,17 @@ body {
     flex: 1;
     min-height: 0; /* Важно для правильной работы прокрутки в flex-контейнере */
 }
+.user-item.active {
+    background-color: #4d4d4d;
+    border: 2px solid yellow;
+    color: yellow;
+}
+
+.user-item {
+    transition: all 0.3s ease;
+    padding: 12px;
+    margin: 8px 0;
+    border-radius: 8px;
+    cursor: pointer;
+    background-color: #333;
+}
