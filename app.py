@@ -1,18 +1,19 @@
 from flask import Flask, render_template, request, jsonify, redirect, url_for, session
 from flask_socketio import SocketIO
 from DB import DB
+import config
 import eventlet
 import requests
 
 app = Flask(__name__, static_folder="www/files", template_folder="www")
-app.config['SECRET_KEY'] = 'secrsssset!'
+app.config['SECRET_KEY'] = config.SECRET_KEY
 socketio = SocketIO(app, async_mode='eventlet', cors_allowed_origins="*")
-BOT_TOKEN = "8041525340:AAGiUjdpl7ZmDc5IO5YvATfXgBRXI_DRCz8"
+BOT_TOKEN = config.TG_BOT_TOKEN
 TELEGRAM_API_URL = f"https://api.telegram.org/bot{BOT_TOKEN}/sendMessage"
 
 # Правильные логин и пароль
-CORRECT_USERNAME = "admin"
-CORRECT_PASSWORD = "AdminA487"
+CORRECT_USERNAME = config.APP_CORRECT_USERNAME
+CORRECT_PASSWORD = config.APP_CORRECT_PASSWORD
 
 @app.route('/')
 def index():
