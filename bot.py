@@ -5,8 +5,9 @@ from aiogram.filters.command import Command
 from aiogram.types import Message
 from aiogram.filters import CommandObject
 from DB import DB
+import config
 
-bot = Bot(token="8041525340:AAGiUjdpl7ZmDc5IO5YvATfXgBRXI_DRCz8")
+bot = Bot(token=config.TG_BOT_TOKEN)
 dp = Dispatcher()
 
 FLASK_SERVER_URL = "http://127.0.0.1:5005"
