@@ -22,7 +22,6 @@ async def start_command(message: Message, command: CommandObject):
 
     token = args
     db = DB()
-
     # Проверяем, существует ли токен в базе данных
     db.cur.execute("SELECT id_user_web FROM Users WHERE token = ?", (token,))
     user = db.cur.fetchone()
