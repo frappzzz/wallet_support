@@ -47,20 +47,16 @@ def generate_tg_key():
     db = DB()
 
     # Проверяем, есть ли пользователь с таким id_user_web
-    db.cur.execute("SELECT token FROM Users WHERE id_user_web = ?", (id_user_web,))
+    db.cur.execute("SELECT id_user_tg, token FROM Users WHERE id_user_web = ?", (id_user_web,))
     user = db.cur.fetchone()
 
-    if user and user[0]:  # Если пользователь уже существует и у него есть токен
-        token = user[0]
+    if user and user[0] and user[1]:  # Если пользователь уже авторизован и имеет токен
+        token = user[1]
     else:
         # Генерируем новый токен
         token = generate_token()
         # Добавляем или обновляем пользователя
-        db.cur.execute("""
-            INSERT OR REPLACE INTO Users (id_user_web, token)
-            VALUES (?, ?)
-        """, (id_user_web, token))
-        db.con.commit()
+        db.addUser(None, id_user_web, token)  # Пока id_user_tg не известен
 
     # Формируем ссылку на Telegram-бота
     bot_username = "hammysupport_bot"  # Замените на username вашего бота

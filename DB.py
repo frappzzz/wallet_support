@@ -57,11 +57,24 @@ class DB():
 
         # Добавляем пользователя
 
-    def addUser(self, id_user_tg, id_user_web):
-        self.cur.execute("""
-               INSERT OR IGNORE INTO Users (id_user_tg, id_user_web) 
-               VALUES (?, ?)
-           """, (id_user_tg, id_user_web))
+    def addUser(self, id_user_tg, id_user_web, token=None):
+        # Проверяем, существует ли пользователь с таким id_user_web
+        self.cur.execute("SELECT id FROM Users WHERE id_user_web = ?", (id_user_web,))
+        user = self.cur.fetchone()
+
+        if user:
+            # Если пользователь существует, обновляем его запись
+            self.cur.execute("""
+                UPDATE Users
+                SET id_user_tg = ?, token = ?
+                WHERE id_user_web = ?
+            """, (id_user_tg, token, id_user_web))
+        else:
+            # Если пользователя нет, создаем новую запись
+            self.cur.execute("""
+                INSERT INTO Users (id_user_tg, id_user_web, token)
+                VALUES (?, ?, ?)
+            """, (id_user_tg, id_user_web, token))
         self.con.commit()
 
         # Получаем id_user_web по id_user_tg
