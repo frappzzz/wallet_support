@@ -33,15 +33,23 @@ def login():
         username = data.get('username')
         password = data.get('password')
 
-        # Проверяем логин и пароль
-        if username == CORRECT_USERNAME and password == CORRECT_PASSWORD:
-            session['logged_in'] = True
-            return jsonify({'success': True})
-        else:
-            return jsonify({'success': False})
+        # Отправляем запрос на внешний API для проверки логина и пароля
+        auth_url = "http://195.2.79.241:5000/api_adm/user_auth"
+        try:
+            response = requests.post(auth_url, json={"login": username, "password": password})
+            response_data = response.json()
+
+            # Проверяем ответ от API
+            if response_data.get("login") == "True" and response_data.get("password") == "True" and response_data.get("status") in [8, 9]:
+                session['logged_in'] = True
+                return jsonify({'success': True})
+            else:
+                return jsonify({'success': False, 'error': 'Ошибка авторизации'})
+        except requests.exceptions.RequestException as e:
+            print(f"Ошибка при запросе к API: {e}")
+            return jsonify({'success': False, 'error': 'Ошибка при запросе к API'})
 
     return render_template('login.html')
-
 
 @app.route('/logout')
 def logout():
