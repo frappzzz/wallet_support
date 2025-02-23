@@ -4,6 +4,9 @@ from DB import DB
 import config
 import eventlet
 import requests
+import random
+import string
+
 
 app = Flask(__name__, static_folder="www/files", template_folder="www")
 app.config['SECRET_KEY'] = config.SECRET_KEY
@@ -26,6 +29,44 @@ def index():
     return render_template('index.html', users=users)
 
 
+def generate_token():
+    # Генерация токена: {буква}{3 цифры}{3 буквы}
+    letter = random.choice(string.ascii_uppercase)
+    digits = ''.join(random.choice(string.digits) for _ in range(3))
+    letters = ''.join(random.choice(string.ascii_uppercase) for _ in range(3))
+    return f"{letter}{digits}{letters}"
+
+@app.route('/generate_tg_key', methods=['POST'])
+def generate_tg_key():
+    data = request.json
+    id_user_web = data.get('id_user_web')
+
+    if not id_user_web:
+        return jsonify({'error': 'id_user_web is required'}), 400
+
+    db = DB()
+
+    # Проверяем, есть ли пользователь с таким id_user_web
+    db.cur.execute("SELECT token FROM Users WHERE id_user_web = ?", (id_user_web,))
+    user = db.cur.fetchone()
+
+    if user and user[0]:  # Если пользователь уже существует и у него есть токен
+        token = user[0]
+    else:
+        # Генерируем новый токен
+        token = generate_token()
+        # Добавляем или обновляем пользователя
+        db.cur.execute("""
+            INSERT OR REPLACE INTO Users (id_user_web, token)
+            VALUES (?, ?)
+        """, (id_user_web, token))
+        db.con.commit()
+
+    # Формируем ссылку на Telegram-бота
+    bot_username = "hammysupport_bot"  # Замените на username вашего бота
+    url = f"https://t.me/{bot_username}?start={token}"
+
+    return jsonify({'url': url})
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     if request.method == 'POST':

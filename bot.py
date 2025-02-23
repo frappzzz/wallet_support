@@ -17,25 +17,31 @@ FLASK_SERVER_URL = "http://127.0.0.1:5005"
 async def start_command(message: Message, command: CommandObject):
     args = command.args
     if not args:
-        await message.answer("Используйте ссылку с параметром id_user_web.")
+        await message.answer("Используйте ссылку с параметром токена.")
         return
 
-    try:
-        id_user_web = int(args)
-    except ValueError:
-        await message.answer("Некорректный id_user_web. Должно быть число.")
-        return
-
+    token = args
     db = DB()
-    db.addUser(message.from_user.id, id_user_web)
-    try:
-        requests.post(f"{FLASK_SERVER_URL}/new_user", json={
-            "id_user_tg": message.from_user.id,
-            "id_user_web": id_user_web
-        })
-    except Exception as e:
-        print(f"Ошибка отправки new_user: {e}")
-    await message.answer("Привет! Это тех.поддержка HammyPay. Задайте ваш вопрос.")
+
+    # Проверяем, существует ли токен в базе данных
+    db.cur.execute("SELECT id_user_web FROM Users WHERE token = ?", (token,))
+    user = db.cur.fetchone()
+
+    if not user:
+        await message.answer("Некорректный токен.")
+        return
+
+    id_user_web = user[0]
+    id_user_tg = message.from_user.id
+
+    # Добавляем или обновляем пользователя
+    db.cur.execute("""
+        INSERT OR REPLACE INTO Users (id_user_tg, id_user_web, token)
+        VALUES (?, ?, ?)
+    """, (id_user_tg, id_user_web, token))
+    db.con.commit()
+
+    await message.answer("Вы успешно авторизованы! Теперь вы можете общаться с поддержкой.")
 
 
 @dp.message()
