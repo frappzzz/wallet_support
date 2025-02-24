@@ -72,8 +72,9 @@ class DB:
         self.cur.execute("""
                CREATE TABLE IF NOT EXISTS Users (
                    id INTEGER PRIMARY KEY AUTOINCREMENT,
-                   id_user_tg INTEGER UNIQUE,
-                   id_user_web INTEGER
+                   id_user_tg INTEGER,
+                   id_user_web INTEGER,
+                   token TEXT
                )
            """)
         self.con.commit()
