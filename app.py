@@ -54,7 +54,7 @@ def generate_tg_key():
 
     bot_username = "hammysupport_bot"
     url = f"https://t.me/{bot_username}?start={token}"
-    return jsonify({'url': url}), user
+    return jsonify({'url': url})
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     if request.method == 'POST':
