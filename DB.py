@@ -35,7 +35,7 @@ class DB:
     def add_user_with_token(self, id_user_web, token):
         self.cur.execute("""
             INSERT INTO Users (id_user_tg, id_user_web, token)
-            VALUES (NULL, ?, ?)
+            VALUES (0, ?, ?)
         """, (id_user_web, token))
         self.con.commit()
     def update_user_tg_id(self, id_user_web, id_user_tg):
