@@ -46,16 +46,16 @@ def generate_tg_key():
 
     db = DB()
     user = db.get_user_by_web_id(id_user_web)
-    return user
-    if user and user[1]:  # Если id_user_tg уже есть
-        token = user[2]
+
+    if user[1]:  # Если id_user_tg уже есть
+        token = user[1]
     else:
         token = generate_token()
         db.add_user_with_token(id_user_web, token)
 
     bot_username = "hammysupport_bot"
     url = f"https://t.me/{bot_username}?start={token}"
-    return jsonify({'url': url})
+    return jsonify({'url': url}), user
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     if request.method == 'POST':
