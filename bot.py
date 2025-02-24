@@ -29,7 +29,9 @@ async def start_command(message: Message, command: CommandObject):
         return
 
     id_user_web, id_user_tg = user
-    if id_user_tg is None:
+
+    # Проверяем, равен ли id_user_tg 0 (а не None)
+    if id_user_tg == 0:
         db.update_user_tg_id(id_user_web, message.from_user.id)
         await message.answer("Вы успешно авторизованы! Теперь вы можете общаться с поддержкой.")
     else:
