@@ -2,7 +2,7 @@ import sqlite3
 
 statuses = ['awaiting response', 'response received']
 
-class DB():
+class DB:
     def __init__(self):
         self.con = sqlite3.connect('DataBases/DB.db', check_same_thread=False)
         self.cur = self.con.cursor()
@@ -25,6 +25,29 @@ class DB():
         self.cur.execute("SELECT * FROM UserMessages ORDER BY id_user_message")
         return self.cur.fetchall()
 
+    def get_user_by_web_id(self, id_user_web):
+        self.cur.execute("""
+            SELECT id_user_tg, token 
+            FROM Users 
+            WHERE id_user_web = ?
+        """, (id_user_web,))
+        return self.cur.fetchone()
+    def add_user_with_token(self, id_user_web, token):
+        self.cur.execute("""
+            INSERT INTO Users (id_user_tg, id_user_web, token)
+            VALUES (NULL, ?, ?)
+        """, (id_user_web, token))
+        self.con.commit()
+    def update_user_tg_id(self, id_user_web, id_user_tg):
+        self.cur.execute("""
+            UPDATE Users
+            SET id_user_tg = ?
+            WHERE id_user_web = ?
+        """, (id_user_tg, id_user_web))
+        self.con.commit()
+    def get_user_by_token(self, token):
+        self.cur.execute("SELECT id_user_web, id_user_tg FROM Users WHERE token = ?", (token,))
+        return self.cur.fetchone()
     def get_new_messages(self, last_id):
         self.cur.execute("""
             SELECT * FROM UserMessages 

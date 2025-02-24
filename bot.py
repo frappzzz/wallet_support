@@ -23,34 +23,17 @@ async def start_command(message: Message, command: CommandObject):
     token = args
     db = DB()
 
-    # Проверяем, существует ли токен в базе данных
-    db.cur.execute("SELECT id_user_web, id_user_tg FROM Users WHERE token = ?", (token,))
-    user = db.cur.fetchone()
-
+    user = db.get_user_by_token(token)
     if not user:
         await message.answer("Некорректный токен.")
         return
 
-    id_user_web = user[0]
-    id_user_tg = message.from_user.id
-
-    # Если пользователь уже авторизован, обновляем его токен
-    if user[1]:  # Если id_user_tg уже есть
-        db.cur.execute("""
-            UPDATE Users
-            SET token = ?
-            WHERE id_user_web = ?
-        """, (token, id_user_web))
+    id_user_web, id_user_tg = user
+    if id_user_tg is None:
+        db.update_user_tg_id(id_user_web, message.from_user.id)
+        await message.answer("Вы успешно авторизованы! Теперь вы можете общаться с поддержкой.")
     else:
-        # Если пользователь не авторизован, добавляем id_user_tg
-        db.cur.execute("""
-            UPDATE Users
-            SET id_user_tg = ?, token = ?
-            WHERE id_user_web = ?
-        """, (id_user_tg, token, id_user_web))
-    db.con.commit()
-
-    await message.answer("Вы успешно авторизованы! Теперь вы можете общаться с поддержкой.")
+        await message.answer("Вы уже авторизованы.")
 
 @dp.message()
 async def handle_message(message: Message):

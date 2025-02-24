@@ -45,23 +45,16 @@ def generate_tg_key():
         return jsonify({'error': 'id_user_web is required'}), 400
 
     db = DB()
+    user = db.get_user_by_web_id(id_user_web)
 
-    # Проверяем, есть ли пользователь с таким id_user_web
-    db.cur.execute("SELECT id_user_tg, token FROM Users WHERE id_user_web = ?", (id_user_web,))
-    user = db.cur.fetchone()
-
-    if user and user[0] and user[1]:  # Если пользователь уже авторизован и имеет токен
-        token = user[1]
+    if user and user[1]:  # Если id_user_tg уже есть
+        token = user[2]
     else:
-        # Генерируем новый токен
         token = generate_token()
-        # Добавляем или обновляем пользователя
-        db.addUser(None, id_user_web, token)  # Пока id_user_tg не известен
+        db.add_user_with_token(id_user_web, token)
 
-    # Формируем ссылку на Telegram-бота
-    bot_username = "hammysupport_bot"  # Замените на username вашего бота
+    bot_username = "hammysupport_bot"
     url = f"https://t.me/{bot_username}?start={token}"
-
     return jsonify({'url': url})
 @app.route('/login', methods=['GET', 'POST'])
 def login():
