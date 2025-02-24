@@ -27,7 +27,7 @@ class DB:
 
     def get_user_by_web_id(self, id_user_web):
         self.cur.execute("""
-            SELECT id_user_tg, token 
+            SELECT id_user_web, token 
             FROM Users 
             WHERE id_user_web = ?
         """, (id_user_web,))
