@@ -28,11 +28,10 @@ async def start_command(message: Message, command: CommandObject):
         await message.answer("Некорректный токен.")
         return
 
-    id_user_web, id_user_tg = user
 
     # Проверяем, равен ли id_user_tg 0 (а не None)
-    if id_user_tg == 0:
-        db.update_user_tg_id(id_user_web, message.from_user.id)
+    if user[1] == 0:
+        db.update_user_tg_id(user[0], message.from_user.id)
         await message.answer("Вы успешно авторизованы! Теперь вы можете общаться с поддержкой.")
     else:
         await message.answer("Вы уже авторизованы.")
