@@ -46,7 +46,7 @@ def generate_tg_key():
 
     db = DB()
     user = db.get_user_by_web_id(id_user_web)
-
+    return user
     if user and user[1]:  # Если id_user_tg уже есть
         token = user[2]
     else:
